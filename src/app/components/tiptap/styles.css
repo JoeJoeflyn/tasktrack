@@ -1,0 +1,31 @@
+/* Basic editor styles */
+.tiptap:first-child {
+  margin-top: 0;
+}
+
+/* Code and preformatted text styles */
+.tiptap code {
+  background-color: var(--purple-light); /* Replace with actual color value */
+  border-radius: 0.4rem;
+  color: var(--black); /* Replace with actual color value */
+  font-size: 0.85rem;
+  padding: 0.25em 0.3em;
+}
+
+/* Color swatches */
+.tiptap .color {
+  white-space: nowrap;
+}
+
+.tiptap .color::before {
+  background-color: var(--color); /* Replace with actual color value */
+  border: 1px solid rgba(128, 128, 128, 0.3);
+  border-radius: 2px;
+  content: " ";
+  display: inline-block;
+  height: 1em;
+  margin-bottom: 0.15em;
+  margin-right: 0.1em;
+  vertical-align: middle;
+  width: 1em;
+}

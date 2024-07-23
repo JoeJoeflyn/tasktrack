@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.tooltip {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    z-index: 100;
+    transform: translateY(-10px);
+    transition:
+        visibility 0s linear 0.2s,
+        opacity 0.2s linear,
+        transform 0.2s ease;
+}
+.has-tooltip:hover .tooltip {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    z-index: 100;
+    transition:
+        visibility 0s linear 0s,
+        opacity 0.5s linear,
+        transform 0.5s ease;
+}
+
+.ce-toolbar__plus,
+.ce-toolbar__settings-btn {
+    --tw-text-opacity: 1;
+    color: rgb(156 163 175 / var(--tw-text-opacity));
+}
+
+.ce-toolbar__plus:hover,
+.ce-toolbar__settings-btn:hover {
+    background: none;
+}
+
+.ce-block--selected .ce-block__content {
+    background: none;
+}
+
+.codex-editor__redactor {
+    margin-right: 0 !important;
+    padding-bottom: 0 !important;
+}
+.ce-toolbar {
+    top: 10px !important;
+}
+
+.embed-tool__caption {
+    display: none;
+}
+
+.ce-block__content,
+.ce-toolbar__content {
+    max-width: unset;
+}
