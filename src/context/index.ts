@@ -13,7 +13,8 @@ const defaultCardDetail: Card = {
     listId: "",
     userId: "",
     name: '',
-    position: 0
+    position: 0,
+    cardColors: []
 };
 
 export const MyContext = createContext<MyContextType>({

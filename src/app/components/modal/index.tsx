@@ -10,7 +10,6 @@ import {
 import { useSession } from "next-auth/react";
 import React from "react";
 import { CardPopover } from "../cardPopover";
-import PlateComponent from "../plate-ui/plate";
 import Tiptap from "../tiptap";
 
 const Modal = () => {

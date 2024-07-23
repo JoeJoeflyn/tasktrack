@@ -21,8 +21,9 @@ const ColorPicker = ({
   const handleClick = (index: number, bgColor: string) => {
     setSelectedColor(bgColor);
     setEditingColor("");
-    if (divRefs.current[index]?.current) {
-      divRefs.current[index].current.focus();
+    const currentDiv = divRefs?.current[index]?.current;
+    if (currentDiv) {
+      currentDiv.focus();
     }
   };
 
