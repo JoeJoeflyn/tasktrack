@@ -1,24 +1,48 @@
 "use client";
 
-import "./styles.css";
-import { BubbleMenu, EditorContent, useEditor } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
-import Underline from "@tiptap/extension-underline";
+import FileHandler from "@tiptap-pro/extension-file-handler";
+import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
+import HorizontalRule from "@tiptap/extension-horizontal-rule";
+import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
+import Underline from "@tiptap/extension-underline";
 import {
-  Bold,
-  Code,
-  Code2,
-  Italic,
-  Link as LinkIcon,
-  Strikethrough,
-  UnderlineIcon,
-} from "lucide-react";
+  BubbleMenu,
+  EditorContent,
+  JSONContent,
+  ReactNodeViewRenderer,
+  useEditor,
+} from "@tiptap/react";
+import StarterKit from "@tiptap/starter-kit";
+import { all, createLowlight } from "lowlight";
+import codeBlock from "./codeBlock";
 import { ColorHighlighter } from "./colorHighlighter";
+import FloatingMenu from "./floatingMenu";
 import { IconReplacer } from "./iconReplacer";
+import "./styles.css";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCardId, updateCard } from "@/app/api";
+import React from "react";
 
-const Tiptap = () => {
+const lowlight = createLowlight(all);
+
+const Tiptap = ({ cardId }: { cardId: string }) => {
+  const queryClient = useQueryClient();
+  const [isEditorFocused, setIsEditorFocused] = React.useState(false);
+
+  const { data } = useQuery({
+    queryKey: ["card", cardId],
+    queryFn: () => getCardId(cardId),
+  });
+
+  const { mutate } = useMutation({
+    mutationFn: updateCard,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["cards"] });
+    },
+  });
+
   const editor = useEditor({
     extensions: [
       StarterKit,
@@ -26,15 +50,73 @@ const Tiptap = () => {
       ColorHighlighter,
       IconReplacer,
       Typography,
+      Image,
+      HorizontalRule,
       Link.configure({
-        openOnClick: false,
+        openOnClick: true,
         autolink: true,
         defaultProtocol: "https",
       }),
+      CodeBlockLowlight.extend({
+        addNodeView() {
+          return ReactNodeViewRenderer(codeBlock);
+        },
+      }).configure({ lowlight }),
+      FileHandler.configure({
+        allowedMimeTypes: [
+          "image/png",
+          "image/jpeg",
+          "image/gif",
+          "image/webp",
+        ],
+        onDrop: (currentEditor, files, pos) => {
+          files.forEach((file) => {
+            const fileReader = new FileReader();
+
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+              currentEditor
+                .chain()
+                .insertContentAt(pos, {
+                  type: "image",
+                  attrs: {
+                    src: fileReader.result,
+                  },
+                })
+                .focus()
+                .run();
+            };
+          });
+        },
+        onPaste: (currentEditor, files, htmlContent) => {
+          files.forEach((file) => {
+            if (htmlContent) {
+              return false;
+            }
+
+            const fileReader = new FileReader();
+
+            fileReader.readAsDataURL(file);
+            fileReader.onload = () => {
+              currentEditor
+                .chain()
+                .insertContentAt(currentEditor.state.selection.anchor, {
+                  type: "image",
+                  attrs: {
+                    src: fileReader.result,
+                  },
+                })
+                .focus()
+                .run();
+            };
+          });
+        },
+      }),
     ],
     immediatelyRender: false,
-    autofocus: true,
-    content: "<p>Hello World! 🌎️</p>",
+    onFocus: () => {
+      setIsEditorFocused(true);
+    },
     editorProps: {
       attributes: {
         class:
@@ -43,88 +125,60 @@ const Tiptap = () => {
     },
   });
 
+  React.useEffect(() => {
+    if (!editor) return;
+
+    // Check if data.description is available and valid
+    if (data?.description) {
+      try {
+        const parsedContent = JSON.parse(data.description);
+        editor.commands.setContent(parsedContent);
+      } catch (error) {
+        console.error("Error parsing JSON:", error);
+      }
+    }
+  }, [data]);
+
+  const handleSave = () => {
+    const json = editor?.getJSON();
+    mutate({ id: cardId, description: JSON.stringify(json) });
+    setIsEditorFocused((prev) => !prev);
+  };
+
+  const handleCancel = () => {
+    setIsEditorFocused((prev) => !prev);
+  };
+
   return (
     <>
       {editor && (
         <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
-          <div className="inline-flex h-full leading-none gap-0.5 flex-row p-1 items-center rounded-lg bg-black shadow-sm border border-neutral-800">
-            <button
-              onClick={() => editor.chain().focus().toggleBold().run()}
-              className={`${
-                editor.isActive("bold")
-                  ? "bg-white/20"
-                  : "bg-transparent hover:bg-zinc-900"
-              } transition-colors h-8 px-2 rounded`}
-            >
-              <Bold size={20} />
-            </button>
-            <button
-              onClick={() => editor.chain().focus().toggleItalic().run()}
-              className={`${
-                editor.isActive("italic")
-                  ? "bg-white/20"
-                  : "bg-transparent hover:bg-zinc-900"
-              } transition-colors h-8 px-2 rounded`}
-            >
-              <Italic size={20} />
-            </button>
-            <button
-              onClick={() => editor.chain().focus().toggleUnderline().run()}
-              className={`${
-                editor.isActive("underline")
-                  ? "bg-white/20"
-                  : "bg-transparent hover:bg-zinc-900"
-              } transition-colors h-8 px-2 rounded`}
-            >
-              <UnderlineIcon size={20} />
-            </button>
-            <button
-              onClick={() => editor.chain().focus().toggleStrike().run()}
-              className={`${
-                editor.isActive("strike")
-                  ? "bg-white/20"
-                  : "bg-transparent hover:bg-zinc-900"
-              } transition-colors h-8 px-2 rounded`}
-            >
-              <Strikethrough size={20} />
-            </button>
-            <button
-              onClick={() => editor.chain().focus().toggleCode().run()}
-              className={`${
-                editor.isActive("code")
-                  ? "bg-white/20"
-                  : "bg-transparent hover:bg-zinc-900"
-              } transition-colors h-8 px-2 rounded`}
-            >
-              <Code size={20} />
-            </button>
-            <button
-              onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-              className={`${
-                editor.isActive("codeBlock")
-                  ? "bg-white/20"
-                  : "bg-transparent hover:bg-zinc-900"
-              } transition-colors h-8 px-2 rounded`}
-            >
-              <Code2 size={20} />
-            </button>
-            {/* <button
-              onClick={() => editor.chain().focus().toggleCodeBlock().run()}
-              className={`${
-                editor.isActive("link")
-                  ? "bg-white/20"
-                  : "bg-transparent hover:bg-zinc-900"
-              } transition-colors h-8 px-2 rounded`}
-            >
-              <LinkIcon size={20} />
-            </button> */}
-          </div>
+          <FloatingMenu editor={editor} />
         </BubbleMenu>
       )}
       <EditorContent
-        className="bg-[#22272b] p-5 ring-1 ring-[#738496] focus-within:ring-1 focus-within:ring-[#85b8ff]"
+        className={`bg-[#22272b] p-5 ${
+          isEditorFocused &&
+          "ring-1 ring-[#738496] focus-within:ring-1 focus-within:ring-[#85b8ff]"
+        }`}
         editor={editor}
       />
+      {isEditorFocused && (
+        <div className="mt-3 flex gap-1 justify-end">
+          <button
+            onClick={handleCancel}
+            className="bg-[#a1bdd914] hover:bg-[#a6c5e229] py-1.5 px-3 font-medium text-sm rounded"
+          >
+            Cancel
+          </button>
+          <button
+            className="bg-blue-400 hover:bg-[#85b8ff] text-[#1d2125] font-medium py-1.5 px-3 rounded"
+            onClick={handleSave}
+          >
+            Save
+          </button>
+        </div>
+      )}
     </>
   );
 };
