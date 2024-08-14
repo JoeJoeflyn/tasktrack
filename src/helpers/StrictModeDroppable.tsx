@@ -4,7 +4,7 @@ import {
   DroppableProps,
   DroppableProvided,
   DroppableStateSnapshot,
-} from "react-beautiful-dnd";
+} from "@hello-pangea/dnd";
 
 interface StrictModeDroppableProps extends DroppableProps {
   children: (

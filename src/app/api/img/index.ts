@@ -93,3 +93,19 @@ export async function getImageId(id: string) {
         console.error("There was an error!", error);
     }
 }
+
+export async function deleteImage(id: string) {
+    try {
+        const response = await fetch(`${BASE_URL}/api/v1/images/${id}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        // Optionally handle the response if needed
+    } catch (error) {
+        console.error("There was an error!", error);
+    }
+}

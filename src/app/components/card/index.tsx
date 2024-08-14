@@ -5,7 +5,7 @@ import { useClickOutside } from "@/hooks";
 import { useMyContext } from "@/hooks/useMyContext";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import React from "react";
-import { Draggable } from "react-beautiful-dnd";
+import { Draggable } from "@hello-pangea/dnd";
 import { CardLabels } from "./label";
 
 const CardComponent = ({ card, index }: { card: CardType; index: number }) => {

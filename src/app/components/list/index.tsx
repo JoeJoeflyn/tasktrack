@@ -6,7 +6,7 @@ import { StrictModeDroppable as Droppable } from "@/helpers/StrictModeDroppable"
 import { useDragAndDrop } from "@/hooks";
 import { useQuery } from "@tanstack/react-query";
 import React, { useCallback } from "react";
-import { DragDropContext, Draggable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable } from "@hello-pangea/dnd";
 import { AddCardForm } from "../addCardForm";
 import { AddListForm } from "../addListForm";
 import { Card } from "../card";

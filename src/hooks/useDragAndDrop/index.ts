@@ -1,7 +1,7 @@
 import { updateCard, updateList } from "@/app/api";
 import { Card, List } from "@/app/shared/interface";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { DropResult } from "react-beautiful-dnd";
+import { DropResult } from "@hello-pangea/dnd";
 
 export const useDragAndDrop = (cardsData: Card[] | undefined, listsData: List[] | undefined) => {
     const queryClient = useQueryClient();

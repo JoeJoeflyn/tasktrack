@@ -1,8 +1,9 @@
 import Header from "@/app/components/header";
+import Providers from "@/provider";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Sidebar from "./components/sidebar";
 import "./globals.css";
-import Providers from "@/provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,7 +23,17 @@ export default function RootLayout({
         <div className="flex flex-col min-h-screen">
           <Providers>
             <Header />
-            {children}
+            <main
+              className="flex-grow flex"
+              style={{
+                backgroundImage: `url(/Tsunami_by_hokusai_19th_century.jpg)`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+              }}
+            >
+              <Sidebar />
+              {children}
+            </main>
           </Providers>
         </div>
       </body>

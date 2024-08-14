@@ -1,6 +1,6 @@
 "use client";
 
-import { addImage, getCardId, updateCard } from "@/app/api";
+import { addImage, deleteImage, getCardId, updateCard } from "@/app/api";
 import {
   useMutation,
   useQueryClient,
@@ -9,13 +9,12 @@ import {
 import FileHandler from "@tiptap-pro/extension-file-handler";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 // import Image from "@tiptap/extension-image";
+import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import Typography from "@tiptap/extension-typography";
-import Image from "@tiptap/extension-image";
 import Underline from "@tiptap/extension-underline";
 import {
   BubbleMenu,
-  Editor,
   EditorContent,
   ReactNodeViewRenderer,
   useEditor,
@@ -35,7 +34,6 @@ const lowlight = createLowlight(all);
 const Tiptap = ({ cardId }: { cardId: string }) => {
   const queryClient = useQueryClient();
   const [isEditorFocused, setIsEditorFocused] = React.useState(false);
-
   const { data } = useSuspenseQuery({
     queryKey: ["card", cardId],
     queryFn: () => getCardId(cardId),
@@ -48,12 +46,12 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
     },
   });
 
-  const {
-    mutate: uploadImage,
-    mutateAsync,
-    data: imageData,
-  } = useMutation({
+  const { mutateAsync } = useMutation({
     mutationFn: addImage,
+  });
+
+  const { mutate: deleteMutation } = useMutation({
+    mutationFn: deleteImage,
   });
 
   const editor = useEditor({
@@ -85,16 +83,13 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
           for (const file of files) {
             const fileReader = new FileReader();
 
-            // Convert the file to a Data URL for preview
             const dataUrlPromise = new Promise((resolve) => {
               fileReader.onload = () => resolve(fileReader.result);
               fileReader.readAsDataURL(file);
             });
 
-            // Wait for the Data URL to be ready
             const dataUrl = await dataUrlPromise;
 
-            // Insert the local preview of the image
             currentEditor
               .chain()
               .insertContentAt(pos, {
@@ -107,23 +102,21 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
               .run();
 
             try {
-              // Upload the image and wait for the URL
               const data = await mutateAsync({ cardId, file });
-
-              // If the upload was successful and the URL is available
+              console.log(data[0].id);
               if (data[0]?.url) {
-                // Replace the local preview with the uploaded image URL
                 currentEditor
                   .chain()
                   .updateAttributes("image", {
                     src: data[0].url,
+                    alt: data[0].id,
+                    title: data[0].publicId,
                   })
                   .focus()
                   .run();
               }
             } catch (error) {
               console.error("Upload failed", error);
-              // Handle upload error (e.g., show notification)
             }
           }
         },
@@ -131,16 +124,13 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
           for (const file of files) {
             const fileReader = new FileReader();
 
-            // Convert the file to a Data URL for preview
             const dataUrlPromise = new Promise((resolve) => {
               fileReader.onload = () => resolve(fileReader.result);
               fileReader.readAsDataURL(file);
             });
 
-            // Wait for the Data URL to be ready
             const dataUrl = await dataUrlPromise;
 
-            // Insert the local preview of the image
             currentEditor
               .chain()
               .insertContentAt(currentEditor.state.selection.anchor, {
@@ -153,12 +143,9 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
               .run();
 
             try {
-              // Upload the image and wait for the URL
               const data = await mutateAsync({ cardId, file });
 
-              // If the upload was successful and the URL is available
               if (data[0]?.url) {
-                // Replace the local preview with the uploaded image URL
                 currentEditor
                   .chain()
                   .updateAttributes("image", {
@@ -169,7 +156,6 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
               }
             } catch (error) {
               console.error("Upload failed", error);
-              // Handle upload error (e.g., show notification)
             }
 
             //   uploadImage({ cardId, file });
@@ -191,6 +177,27 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
     immediatelyRender: false,
     onFocus: () => {
       setIsEditorFocused(true);
+    },
+    onUpdate: ({ transaction }) => {
+      const currentImageSrcs = new Set<string>();
+
+      // Collect current image sources
+      transaction.doc.forEach((node: any) => {
+        if (node.type.name === "image" && node.attrs.src) {
+          currentImageSrcs.add(node.attrs.src);
+        }
+      });
+
+      // Identify images that were removed
+      transaction.before.forEach((node: any) => {
+        if (
+          node.type.name === "image" &&
+          node.attrs.src &&
+          !currentImageSrcs.has(node.attrs.src)
+        ) {
+          deleteMutation(node.attrs.alt);
+        }
+      });
     },
     editorProps: {
       attributes: {
@@ -216,7 +223,6 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
   const handleSave = () => {
     const json = editor?.getJSON();
     editCard({ id: cardId, description: JSON.stringify(json) });
-    setIsEditorFocused((prev) => !prev);
   };
 
   const handleCancel = () => {
@@ -234,7 +240,7 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
         <EditorContent
           className={`bg-[#22272b] p-5 ${
             isEditorFocused &&
-            "ring-1 ring-[#738496] focus-within:ring-1 focus-within:ring-[#85b8ff]"
+            "ring-1 ring-[#738496] focus-within:ring-1 focus-within:ring-[#85b8ff] max-h-[400px] overflow-auto box-border"
           }`}
           editor={editor}
         />
@@ -249,7 +255,10 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
           </button>
           <button
             className="bg-blue-400 hover:bg-[#85b8ff] text-[#1d2125] font-medium py-1.5 px-3 rounded"
-            onClick={handleSave}
+            onClick={() => {
+              handleSave();
+              handleCancel();
+            }}
           >
             Save
           </button>
