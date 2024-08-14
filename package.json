@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "yarn run prebuild && next build",
     "start": "next start",
+    "prebuild": "echo '@tiptap-pro:registry=https://registry.tiptap.dev/' > .npmrc && echo '//registry.tiptap.dev/:_authToken=$TIPTAP_PRO_TOKEN' >> .npmrc",
     "lint": "next lint"
   },
   "dependencies": {
