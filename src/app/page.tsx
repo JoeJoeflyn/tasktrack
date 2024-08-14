@@ -5,7 +5,11 @@ export default function Home() {
   return (
     <main
       className="flex-grow flex"
-      style={{ backgroundImage: `url(/Tsunami_by_hokusai_19th_century.jpg)` }}
+      style={{
+        backgroundImage: `url(/Tsunami_by_hokusai_19th_century.jpg)`,
+        backgroundSize: "cover", // Makes the image cover the entire container
+        backgroundPosition: "center",
+      }}
     >
       <Sidebar />
       <div className="flex-grow flex flex-col overflow-y-hidden">

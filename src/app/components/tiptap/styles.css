@@ -1,4 +1,8 @@
-/* Basic editor styles */
+:root {
+  --blue: #007bff;
+  --blue-contrast: #0056b3;
+}
+
 .tiptap:first-child {
   margin-top: 0;
 }
@@ -28,4 +32,160 @@
   margin-right: 0.1em;
   vertical-align: middle;
   width: 1em;
+}
+
+.tiptap .code-block {
+  position: relative;
+}
+
+.tiptap .code-block select {
+  position: absolute;
+  background-color: #ffffff;
+  border-radius: 0.25rem;
+  padding: 0.2rem 2rem 0.2rem 0.75rem;
+  font-size: 1rem;
+  color: #333333;
+  cursor: pointer;
+  outline: none;
+  right: 0.5rem;
+  top: 0.5rem;
+}
+
+.tiptap .code-block select:focus {
+  border-color: #007bff; /* Focus border color */
+  box-shadow: 0 0 0 2px rgba(38, 143, 255, 0.25); /* Focus shadow */
+}
+
+.tiptap .code-block select:hover {
+  border-color: #999999; /* Hover border color */
+}
+
+.tiptap:first-child {
+  margin-top: 0;
+}
+
+.tiptap pre {
+  background: #000000; /* var(--black) */
+  border-radius: 0.5rem;
+  color: #ffffff; /* var(--white) */
+  font-family: "JetBrainsMono", monospace;
+  margin: 1.5rem 0;
+  padding: 0.75rem 1rem;
+}
+
+.tiptap pre code {
+  background: none;
+  color: inherit;
+  font-size: 0.8rem;
+  padding: 0;
+}
+
+/* Code styling */
+.tiptap pre .hljs-comment,
+.tiptap pre .hljs-quote {
+  color: #616161;
+}
+
+.tiptap pre .hljs-variable,
+.tiptap pre .hljs-template-variable,
+.tiptap pre .hljs-attribute,
+.tiptap pre .hljs-tag,
+.tiptap pre .hljs-name,
+.tiptap pre .hljs-regexp,
+.tiptap pre .hljs-link,
+.tiptap pre .hljs-selector-id,
+.tiptap pre .hljs-selector-class {
+  color: #f98181;
+}
+
+.tiptap pre .hljs-number,
+.tiptap pre .hljs-meta,
+.tiptap pre .hljs-built_in,
+.tiptap pre .hljs-builtin-name,
+.tiptap pre .hljs-literal,
+.tiptap pre .hljs-type,
+.tiptap pre .hljs-params {
+  color: #fbbc88;
+}
+
+.tiptap pre .hljs-string,
+.tiptap pre .hljs-symbol,
+.tiptap pre .hljs-bullet {
+  color: #b9f18d;
+}
+
+.tiptap pre .hljs-title,
+.tiptap pre .hljs-section {
+  color: #faf594;
+}
+
+.tiptap pre .hljs-keyword,
+.tiptap pre .hljs-selector-tag {
+  color: #70cff8;
+}
+
+.tiptap pre .hljs-emphasis {
+  font-style: italic;
+}
+
+.tiptap pre .hljs-strong {
+  font-weight: 700;
+}
+
+.tiptap h1 {
+  font-size: 1.4rem;
+}
+
+.tiptap h2 {
+  font-size: 1.2rem;
+}
+
+.tiptap h3 {
+  font-size: 1.1rem;
+}
+
+.tiptap h4,
+.tiptap h5,
+.tiptap h6 {
+  font-size: 1rem;
+}
+
+.tiptap img {
+  display: block;
+  height: auto;
+  margin: 1.5rem 0;
+  max-width: 100%;
+}
+
+.tiptap img.ProseMirror-selectednode {
+  outline: 3px solid white;
+}
+
+.tiptap ul,
+.tiptap ol {
+  padding: 0 1rem;
+  margin: 1.25rem 1rem 1.25rem 0.4rem;
+}
+
+.tiptap ul {
+  list-style: disc;
+}
+
+.tiptap ol {
+  list-style: decimal;
+}
+
+.tiptap ul li p,
+.tiptap ol li p {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+}
+
+a {
+  color: var(--blue);
+  cursor: pointer;
+}
+
+a:hover {
+  color: var(--blue-contrast);
 }

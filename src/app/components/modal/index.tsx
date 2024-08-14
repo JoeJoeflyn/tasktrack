@@ -245,7 +245,7 @@ const Modal = () => {
                         </div>
                         <div className="ml-10">
                           {/* <PlateComponent /> */}
-                          <Tiptap />
+                          <Tiptap cardId={cardDetail.id} />
                         </div>
                       </div>
                     </div>
