@@ -239,9 +239,6 @@ const Modal = () => {
                           <p className="flex-grow font-semibold text-base">
                             Description
                           </p>
-                          <button className="bg-[#a1bdd914] hover:bg-[#a6c5e229] py-1.5 px-3 font-medium text-sm rounded">
-                            Edit
-                          </button>
                         </div>
                         <div className="ml-10">
                           {/* <PlateComponent /> */}

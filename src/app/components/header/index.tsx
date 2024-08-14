@@ -1,4 +1,5 @@
 "use client";
+import { addUser } from "@/app/api/user";
 import {
   Dialog,
   DialogPanel,
@@ -7,6 +8,7 @@ import {
   PopoverPanel,
   Transition,
 } from "@headlessui/react";
+import { useMutation } from "@tanstack/react-query";
 import { signIn, useSession } from "next-auth/react";
 import React from "react";
 
@@ -48,8 +50,23 @@ const solutions = [
 
 export default function Header() {
   const { data: session } = useSession();
-
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+
+  const { mutate } = useMutation({
+    mutationFn: addUser,
+  });
+
+  React.useEffect(() => {
+    if (session?.user?.name && session?.user?.email && session?.user?.image) {
+      const newUser = {
+        name: session.user.name,
+        email: session.user.email,
+        avatar: session.user.image,
+      };
+
+      mutate(newUser);
+    }
+  }, [session]);
 
   return (
     <header className="bg-neutral-800">
