@@ -240,7 +240,7 @@ const Tiptap = ({ cardId }: { cardId: string }) => {
         <EditorContent
           className={`bg-[#22272b] p-5 ${
             isEditorFocused &&
-            "ring-1 ring-[#738496] focus-within:ring-1 focus-within:ring-[#85b8ff] max-h-[400px] overflow-auto box-border"
+            "ring-1 ring-[#738496] focus-within:ring-1 focus-within:ring-[#85b8ff] max-h-[400px] overflow-auto box-border scrollbar scrollbar-thumb-neutral-500 scrollbar-track-[#00000026]"
           }`}
           editor={editor}
         />

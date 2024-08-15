@@ -26,7 +26,7 @@ export default function RootLayout({
             <main
               className="flex-grow flex"
               style={{
-                backgroundImage: `url(/Tsunami_by_hokusai_19th_century.jpg)`,
+                backgroundImage: `url(https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2400x1600/3f343f9a4eb77945b907a5f6dc9a5d88/photo-1712672162815-c4cca99b27f1.jpg)`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
               }}

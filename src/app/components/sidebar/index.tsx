@@ -1,6 +1,6 @@
 "use client";
 
-import { addBoard, getBoards } from "@/app/api";
+import { addBoard, getBoards, updateBoard } from "@/app/api";
 import { Board } from "@/app/shared/interface";
 import {
   Popover,
@@ -9,15 +9,13 @@ import {
   PopoverPanel,
   Transition,
 } from "@headlessui/react";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
-import { Ellipsis, Plus } from "lucide-react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Ellipsis, Plus, Star } from "lucide-react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import React from "react";
+import StarComponent from "./star";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -33,6 +31,7 @@ export default function Sidebar() {
     sortBy: "name",
     sortOrder: "asc",
   });
+
   const [selectedOption, setSelectedOption] = React.useState(
     "Sort alphabetically"
   );
@@ -76,9 +75,11 @@ export default function Sidebar() {
     setError("");
   };
 
-  const { data } = useSuspenseQuery({
+  const { data } = useQuery({
     queryKey: ["boards", sortOption],
     queryFn: () => getBoards(sortOption),
+    enabled: !!sortOption,
+    refetchOnWindowFocus: false,
   });
 
   const toggleSidebar = () => {
@@ -134,11 +135,11 @@ export default function Sidebar() {
         </button>
       </div>
       <div
-        className={`flex justify-between items-center gap-1 text-[#9fadbc] p-3 space-y-1 ${
+        className={`flex justify-between items-center gap-1 text-[#9fadbc] px-3 space-y-1 ${
           isSidebarOpen ? "" : "hidden"
         }`}
       >
-        <span className="flex-grow">Your board</span>
+        <span className="flex-grow font-bold text-lg">Your board</span>
         <PopoverGroup className="flex gap-x-12">
           <Popover className="relative">
             {({ open, close }) => {
@@ -355,30 +356,29 @@ export default function Sidebar() {
           </Popover>
         </PopoverGroup>
       </div>
-      <ul role="list" className="flex flex-1 flex-col gap-y-7">
-        <li>
-          <ul
-            role="list"
-            className={`space-y-1 ${isSidebarOpen ? "" : "hidden"}`}
-          >
-            {data?.map((item: Board) => (
-              <li key={item.name}>
-                <a
-                  href={`/board/${item.id}`}
-                  className={classNames(
-                    item.id === params.id
-                      ? "bg-zinc-600 hover:bg-zinc-700 hover:text-[#9fadbc] text-[#9fadbc]"
-                      : "text-[#9fadbc] hover:text-white hover:bg-zinc-600",
-                    "group flex gap-x-3 py-2 px-3 text-sm leading-6 font-semibold"
-                  )}
-                >
-                  {item.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </li>
-      </ul>
+      <div className="flex flex-1 flex-col gap-y-7">
+        <ul className={`space-y-1 ${isSidebarOpen ? "" : "hidden"}`}>
+          {data?.map((item: Board) => (
+            <li key={item.name}>
+              <Link
+                href={`/board/${item.id}`}
+                className={classNames(
+                  item.id === params.id
+                    ? "bg-zinc-600 hover:bg-zinc-700 hover:text-[#9fadbc] text-[#9fadbc]"
+                    : "text-[#9fadbc] hover:text-white hover:bg-zinc-600",
+                  "group flex gap-x-3 py-2 px-3 text-sm leading-6 font-semibold"
+                )}
+              >
+                {item.name}
+                <StarComponent
+                  boardId={item.id as string}
+                  star={item.star as boolean}
+                />
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 }

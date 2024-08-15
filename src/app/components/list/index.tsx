@@ -1,20 +1,21 @@
-"use client";
-import { getCards, getLists } from "@/app/api";
+import { getCards, getListId } from "@/app/api";
 import { Card as CardType, List as ListType } from "@/app/shared/interface";
 import { MyContext } from "@/context";
 import { StrictModeDroppable as Droppable } from "@/helpers/StrictModeDroppable";
 import { useDragAndDrop } from "@/hooks";
-import { useQuery } from "@tanstack/react-query";
-import React, { useCallback } from "react";
 import { DragDropContext, Draggable } from "@hello-pangea/dnd";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
+import React, { useCallback } from "react";
 import { AddCardForm } from "../addCardForm";
 import { AddListForm } from "../addListForm";
 import { Card } from "../card";
 import { InlineInput } from "../inlineInput";
-import Modal from "../modal";
 import { ListPopover } from "../listPopover";
+import Modal from "../modal";
 
 export default function List() {
+  const params = useParams();
   const [isAdding, setIsAdding] = React.useState("");
   const [isFormVisible, setIsFormVisible] = React.useState("");
   const [cardDetail, setCardDetail] = React.useState<CardType>(
@@ -26,7 +27,7 @@ export default function List() {
 
   const { data: listsData } = useQuery<ListType[]>({
     queryKey: ["lists"],
-    queryFn: getLists,
+    queryFn: () => getListId(params.id as string),
   });
 
   const { data: cardsData } = useQuery<CardType[]>({
@@ -87,7 +88,7 @@ export default function List() {
                             <Droppable droppableId={list.id} type="CARD">
                               {(provided) => (
                                 <div
-                                  className="flex flex-col gap-2 p-0.5 mt-2 relative overflow-y-auto overflow-x-hidden"
+                                  className="max-h-[650px] flex flex-col gap-2 p-0.5 mt-2 relative scrollbar scrollbar-thumb-neutral-500 scrollbar-track-[#00000026] overflow-y-auto overflow-x-hidden"
                                   ref={provided.innerRef}
                                   {...provided.droppableProps}
                                 >

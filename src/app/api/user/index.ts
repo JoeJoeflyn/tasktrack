@@ -23,6 +23,6 @@ export async function addUser(user: Omit<User, 'id' | 'password'>) {
 
         return data;
     } catch (error) {
-        console.error("There was an error!", error);
+        return;
     }
 }
