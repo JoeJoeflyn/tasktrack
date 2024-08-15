@@ -1,3 +1,4 @@
+import { useParams } from "next/navigation";
 import React from "react";
 import { colorPairs } from "../../shared/colors";
 import { Color } from "../../shared/interface";
@@ -71,6 +72,7 @@ export default function CreateLabel({
   >;
   setIsCreating: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
+  const params = useParams();
   const {
     addMutate,
     isAddPending,
@@ -97,7 +99,7 @@ export default function CreateLabel({
     const newColor: Partial<Color> = {
       title,
       color: selectedColor,
-      boardId: "b1251957-c1a8-4eb3-8ae9-a721025098d8",
+      boardId: params?.id as string,
     };
 
     if (!editing?.id) {

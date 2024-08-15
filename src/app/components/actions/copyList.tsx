@@ -3,6 +3,7 @@ import { List } from "@/app/shared/interface";
 import { useClickOutside } from "@/hooks";
 import { useClose } from "@headlessui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import React from "react";
 
 export default function CopyList({
@@ -12,6 +13,7 @@ export default function CopyList({
   listId: string;
   setMode: React.Dispatch<React.SetStateAction<"copy" | "move" | "actions">>;
 }) {
+  const params = useParams();
   const queryClient = useQueryClient();
   const close = useClose();
   const [listTitle, setListTitle] = React.useState("");
@@ -50,7 +52,7 @@ export default function CopyList({
         : currentList.position + 1024;
 
       const list: Partial<List> = {
-        boardId: "b1251957-c1a8-4eb3-8ae9-a721025098d8",
+        boardId: params?.id as string,
         name: listTitle,
         position: newPosition,
       };

@@ -65,3 +65,20 @@ export async function updateList(list: List) {
     console.error("There was an error!", error);
   }
 }
+
+export async function getListId(id: string) {
+  try {
+    const response = await fetch(
+      `${BASE_URL}/api/v1/lists/${id}`
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("There was an error!", error);
+  }
+}

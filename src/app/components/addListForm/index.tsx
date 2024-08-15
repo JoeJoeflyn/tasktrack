@@ -1,10 +1,12 @@
 import { addList } from "@/app/api";
-import { useClickOutside } from "@/hooks";
 import { List } from "@/app/shared/interface";
+import { useClickOutside } from "@/hooks";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 import React from "react";
 
 export const AddListForm: React.FC = () => {
+  const params = useParams();
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = React.useState(false);
   const [listTitle, setListTitle] = React.useState("");
@@ -33,7 +35,7 @@ export const AddListForm: React.FC = () => {
       currentLists?.reduce((max, list) => Math.max(max, list.position), 0) || 0;
 
     const list: Partial<List> = {
-      boardId: "b1251957-c1a8-4eb3-8ae9-a721025098d8",
+      boardId: params?.id as string,
       name: listTitle,
       position: highestPosition + 1024,
     };

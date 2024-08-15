@@ -12,12 +12,6 @@ import { useMutation } from "@tanstack/react-query";
 import { signIn, useSession } from "next-auth/react";
 import React from "react";
 
-const navigation = [
-  { name: "Features", href: "#" },
-  { name: "Marketplace", href: "#" },
-  { name: "Company", href: "#" },
-];
-
 const solutions = [
   {
     name: "Blog",
@@ -57,14 +51,18 @@ export default function Header() {
   });
 
   React.useEffect(() => {
-    if (session?.user?.name && session?.user?.email && session?.user?.image) {
-      const newUser = {
-        name: session.user.name,
-        email: session.user.email,
-        avatar: session.user.image,
-      };
+    try {
+      if (session?.user?.name && session?.user?.email && session?.user?.image) {
+        const newUser = {
+          name: session.user.name,
+          email: session.user.email,
+          avatar: session.user.image,
+        };
 
-      mutate(newUser);
+        mutate(newUser);
+      }
+    } catch (error) {
+      return;
     }
   }, [session]);
 
@@ -83,65 +81,6 @@ export default function Header() {
               alt=""
             />
           </a>
-          <div className="hidden lg:flex items-center">
-            {navigation.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="text-sm font-semibold leading-6 text-slate-400 px-3 py-2 hover:bg-[#a6c5e229] rounded"
-              >
-                {item.name}
-              </a>
-            ))}
-            <Popover className="relative">
-              <PopoverButton className="flex items-center text-sm font-semibold leading-6 text-slate-400 px-3 py-2 hover:bg-[#a6c5e229] rounded">
-                <span>Solutions</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-5"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="m19.5 8.25-7.5 7.5-7.5-7.5"
-                  />
-                </svg>
-              </PopoverButton>
-
-              <Transition
-                enter="transition ease-out duration-200"
-                enterFrom="opacity-0 translate-y-1"
-                enterTo="opacity-100 translate-y-0"
-                leave="transition ease-in duration-150"
-                leaveFrom="opacity-100 translate-y-0"
-                leaveTo="opacity-0 translate-y-1"
-              >
-                <PopoverPanel className="absolute left-1/2 z-10 mt-6 flex w-screen max-w-max -translate-x-1/2 px-4">
-                  <div className="w-screen max-w-sm flex-auto rounded-3xl bg-neutral-800 p-4 text-sm leading-6 shadow-lg ring-1 ring-gray-900/5">
-                    {solutions.map((item) => (
-                      <div
-                        key={item.name}
-                        className="relative rounded-lg p-4 hover:bg-[#a1bdd914]"
-                      >
-                        <a
-                          href={item.href}
-                          className="font-semibold text-slate-400"
-                        >
-                          {item.name}
-                          <span className="absolute inset-0" />
-                        </a>
-                        <p className="mt-1 text-gray-400">{item.description}</p>
-                      </div>
-                    ))}
-                  </div>
-                </PopoverPanel>
-              </Transition>
-            </Popover>
-          </div>
         </div>
         <div className="flex lg:hidden">
           <button
@@ -215,17 +154,6 @@ export default function Header() {
           </div>
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
-              <div className="space-y-2 py-6">
-                {navigation.map((item) => (
-                  <a
-                    key={item.name}
-                    href={item.href}
-                    className="-mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-slate-400 hover:bg-gray-50"
-                  >
-                    {item.name}
-                  </a>
-                ))}
-              </div>
               <div className="py-6">
                 <a
                   href="#"

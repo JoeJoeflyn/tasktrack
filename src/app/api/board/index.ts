@@ -53,6 +53,31 @@ export async function addBoard(board: Omit<Board, "id" | "star" | "publicId" | "
     }
 }
 
+export async function updateBoard(board: Omit<Board, "email" | "name" | "publicId" | "url">) {
+    try {
+        const response = await fetch(
+            `${BASE_URL}/api/v1/boards/${board.id}`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(board),
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error("There was an error!", error);
+    }
+}
+
 export async function getBoardId(id: string) {
     try {
         const response = await fetch(
